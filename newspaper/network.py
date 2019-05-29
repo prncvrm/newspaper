@@ -30,7 +30,8 @@ def get_request_kwargs(timeout, useragent, proxies, headers):
         'cookies': cj(),
         'timeout': timeout,
         'allow_redirects': True,
-        'proxies': proxies
+        'proxies': proxies,
+        'verify': False
     }
 
 
@@ -80,7 +81,8 @@ def _get_html_from_response(response, config):
     else:
         html = response.content
         if 'charset' not in response.headers.get('content-type'):
-            encodings = requests.utils.get_encodings_from_content(response.text)
+            encodings = requests.utils.get_encodings_from_content(
+                response.text)
             if len(encodings) > 0:
                 response.encoding = encodings[0]
                 html = response.text
@@ -94,6 +96,7 @@ class MRequest(object):
     If this is the case, we still want to report the url which has failed
     so (perhaps) we can try again later.
     """
+
     def __init__(self, url, config=None):
         self.url = url
         self.config = config
@@ -133,4 +136,3 @@ def multithread_request(urls, config=None):
 
     pool.wait_completion()
     return m_requests
-
